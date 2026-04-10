@@ -1,11 +1,12 @@
 # menu.py
 # Módulo de menú interactivo en consola
-# Módulo 4: UI con colorama + validación de entradas + flujo CRUD completo
+# Módulo 5: agregada opción de generar registros falsos con Faker
 
 from colorama import init, Fore, Style
 from service import new_register, list_records, search_record, update_record, delete_record
+from integration import generar_registros_falsos
 
-init(autoreset=True)  
+init(autoreset=True)
 
 def _encabezado() -> None:
     print(Fore.CYAN + "=" * 45)
@@ -41,17 +42,14 @@ def _input_numero(prompt: str, tipo=float):
 
 def _crear_venta() -> None:
     print(Fore.CYAN + "\n── Crear nueva venta ──")
-    id_venta  = _input_requerido("  ID       : ")
-    cliente   = _input_requerido("  Cliente  : ")
-    producto  = _input_requerido("  Producto : ")
-    cantidad  = _input_numero("  Cantidad : ", int)
-    precio    = _input_numero("  Precio   : ")
+    id_venta = _input_requerido("  ID       : ")
+    cliente  = _input_requerido("  Cliente  : ")
+    producto = _input_requerido("  Producto : ")
+    cantidad = _input_numero("  Cantidad : ", int)
+    precio   = _input_numero("  Precio   : ")
 
     exito, mensaje = new_register(id_venta, cliente, producto, cantidad, precio)
-    if exito:
-        print(Fore.GREEN + f"\n  ✅ {mensaje}")
-    else:
-        print(Fore.RED + f"\n  ❌ {mensaje}")
+    print(Fore.GREEN + f"\n  ✅ {mensaje}" if exito else Fore.RED + f"\n  ❌ {mensaje}")
 
 
 def _listar_ventas() -> None:
@@ -114,10 +112,7 @@ def _actualizar_venta() -> None:
         return
 
     exito, mensaje = update_record(id_venta, **campos)
-    if exito:
-        print(Fore.GREEN + f"\n  ✅ {mensaje}")
-    else:
-        print(Fore.RED + f"\n  ❌ {mensaje}")
+    print(Fore.GREEN + f"\n  ✅ {mensaje}" if exito else Fore.RED + f"\n  ❌ {mensaje}")
 
 
 def _eliminar_venta() -> None:
@@ -135,11 +130,21 @@ def _eliminar_venta() -> None:
         return
 
     exito, mensaje = delete_record(id_venta)
-    if exito:
-        print(Fore.GREEN + f"\n  ✅ {mensaje}")
-    else:
-        print(Fore.RED + f"\n  ❌ {mensaje}")
+    print(Fore.GREEN + f"\n  ✅ {mensaje}" if exito else Fore.RED + f"\n  ❌ {mensaje}")
 
+
+def _generar_falsos() -> None:
+    print(Fore.CYAN + "\n── Generar registros falsos con Faker ──")
+    try:
+        cantidad = int(input(Fore.WHITE + "  ¿Cuántos registros generar? (default 10): ").strip() or "10")
+    except ValueError:
+        cantidad = 10
+
+    print(Fore.YELLOW + f"\n  Generando {cantidad} registros...")
+    exitosos, fallidos = generar_registros_falsos(cantidad=cantidad)
+    print(Fore.GREEN + f"  ✅ {exitosos} registros creados correctamente.")
+    if fallidos:
+        print(Fore.RED + f"  ❌ {fallidos} registros fallaron.")
 
 def mostrar_menu() -> None:
     print(Fore.CYAN + "\n┌─ Menú ───────────────────────────────┐")
@@ -148,7 +153,8 @@ def mostrar_menu() -> None:
     print(Fore.WHITE + "│  3. Buscar venta                      │")
     print(Fore.WHITE + "│  4. Actualizar venta                  │")
     print(Fore.WHITE + "│  5. Eliminar venta                    │")
-    print(Fore.RED   + "│  6. Salir                             │")
+    print(Fore.MAGENTA+"│  6. Generar registros falsos (Faker)  │")
+    print(Fore.RED   + "│  7. Salir                             │")
     print(Fore.CYAN  + "└───────────────────────────────────────┘")
 
 
@@ -161,6 +167,7 @@ def ejecutar_menu() -> None:
         "3": _buscar_venta,
         "4": _actualizar_venta,
         "5": _eliminar_venta,
+        "6": _generar_falsos,
     }
 
     while True:
@@ -168,7 +175,7 @@ def ejecutar_menu() -> None:
         try:
             opcion = input(Fore.CYAN + "  Elige una opción: ").strip()
 
-            if opcion == "6":
+            if opcion == "7":
                 print(Fore.YELLOW + "\n  Hasta luego. 👋\n")
                 break
             elif opcion in opciones:
@@ -177,7 +184,7 @@ def ejecutar_menu() -> None:
                 raise ValueError(f"Opción inválida: '{opcion}'")
 
         except ValueError as e:
-            print(Fore.RED + f"  ⚠ {e} — ingresa un número del 1 al 6.")
+            print(Fore.RED + f"  ⚠ {e} — ingresa un número del 1 al 7.")
         except KeyboardInterrupt:
             print(Fore.YELLOW + "\n\n  Programa interrumpido. Hasta luego. 👋\n")
             break
