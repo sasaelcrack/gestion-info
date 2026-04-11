@@ -2,3 +2,4 @@ faker
 pandas
 requests
 colorama
+pytest

@@ -13,6 +13,7 @@ Sistema de gestión de ventas por consola en Python. Permite realizar operacione
 - ✅ No permite IDs duplicados (uso de set)
 - ✅ Generación de registros falsos con Faker
 - ✅ Código modular separado por responsabilidades
+- ✅ Pruebas unitarias con pytest
 
 ---
 
@@ -36,6 +37,8 @@ gestion-info/
 │   ├── file.py          # Persistencia (leer/guardar)
 │   ├── validate.py      # Validaciones y helpers
 │   └── integration.py   # Integración con Faker
+├── test/
+│   └── tests.py         # Pruebas unitarias
 ├── .gitignore
 ├── README.md
 └── requirements.txt
@@ -66,6 +69,7 @@ Las dependencias del proyecto son:
 | `colorama` | Colores en la consola |
 | `pandas` | Disponible para reportes |
 | `requests` | Disponible para integraciones externas |
+| `pytest` | Ejecución de pruebas unitarias |
 
 ---
 
@@ -74,6 +78,30 @@ Las dependencias del proyecto son:
 ```bash
 py src/main.py
 ```
+
+---
+
+## 🧪 Pruebas
+
+Para correr las pruebas unitarias:
+
+```bash
+py -m pytest test/tests.py -v
+```
+
+Resultado esperado:
+
+```
+20 passed in Xs
+```
+
+Las pruebas cubren:
+- Validación de ID
+- Validación de cliente
+- Validación de cantidad
+- Validación de precio
+- Validación de estado
+- Validación de registro completo
 
 ---
 
